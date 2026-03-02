@@ -33,7 +33,7 @@ public class DatabaseConnection {
 
             // Tiến hành kết nối
             connection = DriverManager.getConnection(url, user, password);
-            System.out.println("✅ Đã kết nối Database thành công qua file properties!");
+            //System.out.println("✅ Đã kết nối Database thành công qua file properties!");
 
         } catch (Exception e) {
             System.out.println("❌ Lỗi cấu hình hoặc kết nối Database: " + e.getMessage());
