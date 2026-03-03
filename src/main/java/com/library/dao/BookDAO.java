@@ -3,6 +3,7 @@ package com.library.dao;
 import com.library.model.Book;
 import com.library.util.DatabaseConnection;
 
+import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -15,33 +16,114 @@ public class BookDAO implements IBookDAO {
     @Override
     public boolean add(Book book){
         String sql="INSERT INTO book(id,title,author,quantity) VALUES(?::uuid,?,?,?)";
+        String notice="Error! Cannot insert book into database!!";
         try(PreparedStatement pstmt=conn.prepareStatement(sql)){
             pstmt.setString(1,book.getId());
             pstmt.setString(2, book.getTitle());
             pstmt.setString(3, book.getAuthor());
             pstmt.setInt(4,book.getQuantity());
-
             int rowsAffected=pstmt.executeUpdate();
             return rowsAffected>0;
         } catch (SQLException e) {
-            System.out.println("Error! Cannot insert book into database!!");
+            System.out.println(notice);
             return false;
         }
     }
     @Override
     public boolean update(Book book){
-        //pass
-        return true;
+        String sql="UPDATE book set title=?,author=?,quantity=? where id=?::uuid";
+        String notice="Error! Cannot update data!!";
+        try(PreparedStatement pstmt=conn.prepareStatement(sql)){
+            pstmt.setString(1, book.getTitle());
+            pstmt.setString(2, book.getAuthor());
+            pstmt.setInt(3,book.getQuantity());
+            pstmt.setString(4,book.getId());
+            int rowsAffected=pstmt.executeUpdate();
+            return rowsAffected>0;
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+            System.out.println(notice);
+            return false;
+        }
     }
     @Override
     public boolean delete(String id){
-        //pass
-        return true;
+        String sql="delete from book where id=?::uuid";
+        try(PreparedStatement pstmt=conn.prepareStatement(sql)){
+            pstmt.setString(1,id);
+            int rowsAffected=pstmt.executeUpdate();
+            return rowsAffected>0;
+        } catch (SQLException e) {
+            System.out.println("Cannot delete book! please check again");
+            return false;
+        }
     }
     @Override
     public List<Book> getAll(){
-        //pass
-        return new ArrayList<>();
+        List<Book> list=new ArrayList<>();
+        String sql="Select id,title,author,quantity from book";
+        try(PreparedStatement pstmt=conn.prepareStatement(sql);ResultSet rs=pstmt.executeQuery()){
+            while(rs.next()){
+                String id=rs.getString("id");
+                String title=rs.getString("title");
+                String author=rs.getString("author");
+                int quantity=rs.getInt("quantity");
+                list.add(new Book(id,title,author,quantity));
+            }
+        } catch (SQLException e) {
+            System.out.println("Error!! Cannot select table book");
+            System.out.println(e.getMessage());
+        }
+        return list;
+    }
+    @Override
+    public List<Book> searchBook(String keyword) {
+        List<Book> list = new ArrayList<>();
+        // Dùng LOWER để tìm kiếm không phân biệt hoa thường
+        // Dùng %?% để tìm kiếm một phần của chuỗi
+        String sql = "SELECT * FROM reader WHERE " +
+                "LOWER(title) LIKE LOWER(?) OR " +
+                "LOWER(author) LIKE LOWER(?)";
+
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            String searchPattern = "%" + keyword + "%";
+            pstmt.setString(1, searchPattern);
+            pstmt.setString(2, searchPattern);
+
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    list.add(new Book(
+                            rs.getString("id"),
+                            rs.getString("title"),
+                            rs.getString("author"),
+                            rs.getInt("quantity")
+                    ));
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println("❌ Lỗi tìm kiếm sách: " + e.getMessage());
+        }
+        return list;
+    }
+    @Override
+    public Book findById(String id) {
+        String sql = "SELECT id, title, author, quantity FROM book WHERE id = ?::uuid";
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, id);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) { // Nếu tìm thấy (chỉ có 1 dòng vì ID là duy nhất)
+                    return new Book(
+                            rs.getString("id"),
+                            rs.getString("title"),
+                            rs.getString("author"),
+                            rs.getInt("quantity")
+                    );
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println("❌ Lỗi khi tìm sách theo ID: " + e.getMessage());
+        }
+        return null; // Nếu không tìm thấy
     }
 
 }

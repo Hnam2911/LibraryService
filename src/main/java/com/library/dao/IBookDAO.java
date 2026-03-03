@@ -9,4 +9,6 @@ public interface IBookDAO {
     boolean update(Book book);
     boolean delete(String id);
     List<Book> getAll();
+    Book findById(String id);
+    List<Book> searchBook(String keyword);
 }

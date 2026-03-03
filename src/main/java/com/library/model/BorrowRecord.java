@@ -10,7 +10,7 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class BorowRecord {
+public class BorrowRecord {
     private String id;
     private Reader reader;
     private Book book;
