@@ -1,9 +1,6 @@
 package com.library.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDate;
 @Data
@@ -11,7 +8,9 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @Builder
 public class BorrowRecord {
+    @Setter(AccessLevel.NONE)
     private String id;
+
     private Reader reader;
     private Book book;
     private LocalDate borrowDate;

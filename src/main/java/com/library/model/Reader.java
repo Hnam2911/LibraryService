@@ -1,14 +1,14 @@
 package com.library.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 public class Reader {
+    @Setter(AccessLevel.NONE)
     private String id;
+
     private String name;
     private String phone;
     private String email;
