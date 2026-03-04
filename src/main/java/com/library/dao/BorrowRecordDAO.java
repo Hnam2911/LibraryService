@@ -146,5 +146,28 @@ public class BorrowRecordDAO implements IBorrowRecordDAO {
         }
         return list;
     }
+    @Override
+    public BorrowRecord findById(String id){
+        String sql = "SELECT id, reader_id,book_id,borrow_date,return_date,status FROM book WHERE id = ?::uuid;";
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, id);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if(rs.next()) return mapResultSetToBorrowRecord(rs);
+            }
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+        return null;
+    }
+    @Override
+    public void checkOverdue(){
+        String sql = "UPDATE borrow_record SET status = 'overdue' " +
+                "WHERE status = 'borrowed' AND return_date < CURRENT_DATE";
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
 
 }

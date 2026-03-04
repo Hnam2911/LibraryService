@@ -10,4 +10,6 @@ public interface IBorrowRecordDAO {
     boolean delete(String id);
     List<BorrowRecord> getAll();
     List<BorrowRecord> searchRecord(String keyword);
+    BorrowRecord findById(String id);
+    void checkOverdue();
 }
