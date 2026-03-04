@@ -11,4 +11,6 @@ public interface IReaderDAO {
     List<Reader> getAll();
     Reader findById(String id);
     List<Reader> searchReader(String keyword);
+    Reader findByPhone(String phone);
+    Reader findByEmail(String email);
 }

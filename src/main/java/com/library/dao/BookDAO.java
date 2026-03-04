@@ -92,12 +92,7 @@ public class BookDAO implements IBookDAO {
 
             try (ResultSet rs = pstmt.executeQuery()) {
                 while (rs.next()) {
-                    list.add(new Book(
-                            rs.getString("id"),
-                            rs.getString("title"),
-                            rs.getString("author"),
-                            rs.getInt("quantity")
-                    ));
+                    list.add(mapResult(rs));
                 }
             }
         } catch (SQLException e) {
@@ -112,12 +107,7 @@ public class BookDAO implements IBookDAO {
             pstmt.setString(1, id);
             try (ResultSet rs = pstmt.executeQuery()) {
                 if (rs.next()) { // Nếu tìm thấy (chỉ có 1 dòng vì ID là duy nhất)
-                    return new Book(
-                            rs.getString("id"),
-                            rs.getString("title"),
-                            rs.getString("author"),
-                            rs.getInt("quantity")
-                    );
+                    return mapResult(rs);
                 }
             }
         } catch (SQLException e) {
@@ -125,5 +115,26 @@ public class BookDAO implements IBookDAO {
         }
         return null; // Nếu không tìm thấy
     }
-
+    @Override
+    public Book find(String title,String author) {
+        String sql = "SELECT id, title, author, quantity FROM book WHERE title = ? and author=?;";
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, title);
+            pstmt.setString(2, author);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) return mapResult(rs);
+            }
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+        return null;
+    }
+    public Book mapResult(ResultSet rs) throws SQLException {
+        return new Book(
+                rs.getString("id"),
+                rs.getString("title"),
+                rs.getString("author"),
+                rs.getInt("quantity")
+        );
+    }
 }

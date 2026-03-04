@@ -65,17 +65,21 @@ public class ReaderDAO implements IReaderDAO{
         try(PreparedStatement pstmt= conn.prepareStatement(sql);
             ResultSet rs=pstmt.executeQuery()){
             while(rs.next()){
-                String id=rs.getString("id");
-                String name=rs.getString("name");
-                String phone=rs.getString("phone");
-                String email=rs.getString("email");
-                list.add(new Reader(id,name,phone,email));
+                list.add(mapResult(rs));
             }
         } catch (Exception e) {
             System.out.println("Cannot access reader database");
             System.out.println(e.getMessage());
         }
         return list;
+    }
+    public Reader mapResult(ResultSet rs) throws SQLException {
+            return new Reader(
+                    rs.getString("id"),
+                    rs.getString("name"),
+                    rs.getString("phone"),
+                    rs.getString("email")
+            );
     }
     @Override
     public List<Reader> searchReader(String keyword) {
@@ -95,12 +99,7 @@ public class ReaderDAO implements IReaderDAO{
 
             try (ResultSet rs = pstmt.executeQuery()) {
                 while (rs.next()) {
-                    list.add(new Reader(
-                            rs.getString("id"),
-                            rs.getString("name"),
-                            rs.getString("phone"),
-                            rs.getString("email")
-                    ));
+                    list.add(mapResult(rs));
                 }
             }
         } catch (SQLException e) {
@@ -115,16 +114,38 @@ public class ReaderDAO implements IReaderDAO{
             pstmt.setString(1,id);
             try(ResultSet rs=pstmt.executeQuery()) {
                 if (rs.next()) {
-                    return new Reader(
-                            id,
-                            rs.getString("name"),
-                            rs.getString("phone"),
-                            rs.getString("email")
-                    );
+                    return mapResult(rs);
                 }
             }
         } catch (Exception e) {
             System.out.println("Cannot find reader!Please check again id");
+        }
+        return null;
+    }
+    @Override
+    public Reader findByPhone(String phone){
+        String sql = "SELECT id, name,phone,email FROM book WHERE phone = ?;";
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, phone);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if(rs.next()) return mapResult(rs);
+            }
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+        return null;
+    }
+
+    @Override
+    public Reader findByEmail(String email){
+        String sql = "SELECT id, name,phone,email FROM book WHERE email = ?;";
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, email);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if(rs.next()) return mapResult(rs);
+            }
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
         }
         return null;
     }

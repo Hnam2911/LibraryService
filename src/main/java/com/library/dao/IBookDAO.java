@@ -11,4 +11,5 @@ public interface IBookDAO {
     List<Book> getAll();
     Book findById(String id);
     List<Book> searchBook(String keyword);
+    Book find(String title,String author);
 }
