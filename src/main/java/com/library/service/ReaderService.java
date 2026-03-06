@@ -6,6 +6,7 @@ import com.library.model.Reader;
 import lombok.Locked;
 
 import java.util.List;
+import java.util.UUID;
 
 public class ReaderService {
     private IReaderDAO readerDAO=new ReaderDAO();
@@ -22,7 +23,11 @@ public class ReaderService {
         }
         return true;
     }
-    public boolean addReader(Reader reader){
+    public boolean addReader(String name,String phone,String email){
+        Reader reader= new Reader(
+                UUID.randomUUID().toString(),
+                name,phone,email
+        );
         if(!check(reader)) return false;
         if(readerDAO.findByPhone(reader.getPhone())!=null){
             System.out.println("Phone already exists!");

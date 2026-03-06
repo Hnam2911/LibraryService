@@ -148,7 +148,13 @@ public class BorrowRecordDAO implements IBorrowRecordDAO {
     }
     @Override
     public BorrowRecord findById(String id){
-        String sql = "SELECT id, reader_id,book_id,borrow_date,return_date,status FROM book WHERE id = ?::uuid;";
+        String sql = "SELECT br.id, br.borrow_date, br.return_date, br.status, " +
+                "b.id AS book_id, b.title, b.author, b.quantity, " +
+                "r.id AS reader_id, r.name, r.phone, r.email " +
+                "FROM borrow_record br " +
+                "INNER JOIN book b ON br.book_id = b.id " +
+                "INNER JOIN reader r ON br.reader_id = r.id " +
+                "WHERE br.id=?::uuid";
         try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, id);
             try (ResultSet rs = pstmt.executeQuery()) {

@@ -5,10 +5,15 @@ import com.library.dao.IBookDAO;
 import com.library.model.Book;
 
 import java.util.List;
+import java.util.UUID;
 
 public class BookService {
     private IBookDAO bookDAO=new BookDAO();
-    public boolean addBook(Book book){
+    public boolean addBook(String title,String author,int quantity){
+        Book book=new Book(
+                UUID.randomUUID().toString(),
+                title,author,quantity
+        );
         if(book.getQuantity()<0){
             System.out.println("Error! quantity must be >=0");
             return false;

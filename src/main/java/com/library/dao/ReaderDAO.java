@@ -124,7 +124,7 @@ public class ReaderDAO implements IReaderDAO{
     }
     @Override
     public Reader findByPhone(String phone){
-        String sql = "SELECT id, name,phone,email FROM book WHERE phone = ?;";
+        String sql = "SELECT id, name,phone,email FROM reader WHERE phone = ?;";
         try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, phone);
             try (ResultSet rs = pstmt.executeQuery()) {
@@ -138,7 +138,7 @@ public class ReaderDAO implements IReaderDAO{
 
     @Override
     public Reader findByEmail(String email){
-        String sql = "SELECT id, name,phone,email FROM book WHERE email = ?;";
+        String sql = "SELECT id, name,phone,email FROM reader WHERE email = ?;";
         try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, email);
             try (ResultSet rs = pstmt.executeQuery()) {

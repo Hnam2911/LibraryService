@@ -1,75 +1,45 @@
 package com.library.main;
 
-import com.library.dao.BookDAO;
-import com.library.dao.BorrowRecordDAO;
-import com.library.dao.ReaderDAO;
-import com.library.model.Book;
-import com.library.model.BorrowRecord;
-import com.library.model.Reader;
-import com.library.util.DatabaseConnection;
+import javafx.application.Application;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.stage.Stage;
 
-import java.time.LocalDate;
-import java.util.List;
-import java.util.UUID;
+import java.net.URL;
 
-public class Main {
-    public static void main(String[] args) {
-        BookDAO bookDAO = new BookDAO();
-        ReaderDAO readerDAO = new ReaderDAO();
-        BorrowRecordDAO borrowDAO = new BorrowRecordDAO();
+public class Main extends Application {
 
-        // 1. Lấy dữ liệu mồi (Mock data) từ Database
-        List<Book> books = bookDAO.getAll();
-        List<Reader> readers = readerDAO.getAll();
+    @Override
+    public void start(Stage primaryStage) throws Exception {
+        // 1. Chỉ định đường dẫn tới bản vẽ FXML
+        // LƯU Ý CHÍNH MẠNG: Đường dẫn này phụ thuộc vào nơi bạn lưu file FXML!
+        URL fxmlLocation = getClass().getResource("/view/MainLayout.fxml");
 
-        if (books.isEmpty() || readers.isEmpty()) {
-            System.out.println("❌ Database phải có ít nhất 1 cuốn sách và 1 độc giả để test!");
+        if (fxmlLocation == null) {
+            System.out.println("❌ LỖI NGHIÊM TRỌNG: Không tìm thấy file FXML. Hãy kiểm tra lại đường dẫn!");
             return;
         }
 
-        Book sampleBook = books.get(0);
-        Reader sampleReader = readers.get(0);
+        // 2. Gọi thợ xây FXMLLoader ra đọc bản vẽ
+        FXMLLoader loader = new FXMLLoader(fxmlLocation);
 
-        // 2. Test chức năng THÊM (CREATE)
-        System.out.println("--- TEST ADD ---");
-        BorrowRecord newRecord = new BorrowRecord(
-                UUID.randomUUID().toString(),
-                sampleReader,
-                sampleBook,
-                LocalDate.now(),
-                LocalDate.now().plusDays(14),
-                "borrowed"
-        );
+        // 3. Xây nhà (Tạo ra đối tượng Parent chứa toàn bộ giao diện)
+        Parent root = loader.load();
 
-        boolean isAdded = borrowDAO.add(newRecord);
-        System.out.println("Thêm phiếu mượn: " + (isAdded ? "THÀNH CÔNG" : "THẤT BẠI"));
+        // 4. Đặt ngôi nhà lên một cái bãi đất (Scene)
+        // Kích thước 1000x700 là kích thước mặc định lúc khởi động
+        Scene scene = new Scene(root, 1000, 700);
 
-        // 3. Test chức năng ĐỌC (READ)
-        System.out.println("\n--- TEST GET ALL ---");
-        List<BorrowRecord> records = borrowDAO.getAll();
-        for (BorrowRecord record : records) {
-            System.out.println("Phiếu: " + record.getId() +
-                    " | Độc giả: " + record.getReader().getName() +
-                    " | Sách: " + record.getBook().getTitle());
-        }
+        // 5. Cấu hình Cửa sổ ứng dụng (Stage)
+        primaryStage.setTitle("Hệ thống Quản lý Thư viện v1.0"); // Tiêu đề cửa sổ
+        primaryStage.setScene(scene); // Lắp Scene vào Stage
+        primaryStage.centerOnScreen(); // Hiển thị ở chính giữa màn hình
+        primaryStage.show(); // Lệnh cuối cùng: Bật cửa sổ lên!
+    }
 
-        // 4. Test chức năng SỬA (UPDATE)
-        if (!records.isEmpty()) {
-            System.out.println("\n--- TEST UPDATE ---");
-            BorrowRecord recordToUpdate = records.get(0);
-            recordToUpdate.setStatus("returned");
-            boolean isUpdated = borrowDAO.update(recordToUpdate);
-            System.out.println("Cập nhật trạng thái thành 'returned': " + (isUpdated ? "THÀNH CÔNG" : "THẤT BẠI"));
-        }
-        System.out.println(borrowDAO.searchRecord("2026"));
-
-        // 5. Test chức năng XÓA (DELETE)
-        if (!records.isEmpty()) {
-            System.out.println("\n--- TEST DELETE ---");
-            // Lấy ID của phiếu mượn đầu tiên để xóa
-            String idToDelete = records.get(0).getId();
-            boolean isDeleted = borrowDAO.delete(idToDelete);
-            System.out.println("Xóa phiếu mượn " + idToDelete + ": " + (isDeleted ? "THÀNH CÔNG" : "THẤT BẠI"));
-        }
+    public static void main(String[] args) {
+        // Kích hoạt chu trình sống của JavaFX
+        launch(args);
     }
 }

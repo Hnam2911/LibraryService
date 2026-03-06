@@ -23,7 +23,8 @@ public class BorrowService {
         RECORD_NOT_FOUND,
         BORROW_DATE_ERROR,
         RETURN_DATE_ERROR,
-        STATUS_ERROR
+        STATUS_ERROR,
+        ADD_ERROR,
     }
     public BorrowStatus borrowBook(String title,String author,String phone,int days){
         Book book=bookDAO.find(title,author);
@@ -37,12 +38,14 @@ public class BorrowService {
                 book,                         // Object Book xịn lấy từ DB
                 LocalDate.now(),
                 LocalDate.now().plusDays(days),
-                "BORROWED"
+                "borrowed"
         );
 
-        borrowDAO.add(newRecord);
-        book.setQuantity(book.getQuantity() - 1);
-        bookDAO.update(book);
+        if(borrowDAO.add(newRecord)){
+            book.setQuantity(book.getQuantity() - 1);
+            bookDAO.update(book);
+        }
+        else return BorrowStatus.ADD_ERROR;
 
         return BorrowStatus.SUCCESS;
     }
@@ -91,7 +94,21 @@ public class BorrowService {
         return true;
     }
     public void checkOverdue(){ borrowDAO.checkOverdue();}
-    public boolean deleteRecord(String id){return borrowDAO.delete(id);}
+    public boolean deleteRecord(String id){
+        // 1. Tìm thông tin phiếu mượn trước khi xóa
+        BorrowRecord record = borrowDAO.findById(id);
+        if (record == null) return false;
+
+        // 2. Nếu trạng thái là đang mượn hoặc quá hạn, phải trả lại số lượng cho sách
+        if ("borrowed".equals(record.getStatus()) || "overdue".equals(record.getStatus())) {
+            Book book = record.getBook();
+            book.setQuantity(book.getQuantity() + 1);
+            bookDAO.update(book); // Cập nhật lại kho
+        }
+
+        // 3. Thực hiện xóa phiếu mượn
+        return borrowDAO.delete(id);
+    }
     public List<BorrowRecord> getAllRecord(){return borrowDAO.getAll();}
     public List<BorrowRecord> searchRecord(String keyword){return borrowDAO.searchRecord(keyword);}
 }
