@@ -4,7 +4,6 @@ import lombok.*;
 
 @Data
 @NoArgsConstructor
-@AllArgsConstructor
 public class Book {
     @Setter(AccessLevel.NONE)
     private String id;
@@ -12,4 +11,15 @@ public class Book {
     private String title;
     private String author;
     private int quantity;
+
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
+    private int borrowedQuantity;
+
+    public Book(String id, String title, String author, int quantity) {
+        this.id = id;
+        this.title = title;
+        this.author = author;
+        this.quantity = quantity;
+    }
 }

@@ -61,14 +61,16 @@ public class BookDAO implements IBookDAO {
     @Override
     public List<Book> getAll(){
         List<Book> list=new ArrayList<>();
-        String sql="Select id,title,author,quantity from book";
+        String sql = "SELECT b.*, " +
+                "COALESCE((SELECT COUNT(*) FROM borrow_record br " +
+                "          WHERE br.book_id = b.id " +
+                "          AND br.status IN ('borrowed', 'overdue')), 0) AS borrowed_qty " +
+                "FROM book b";
         try(PreparedStatement pstmt=conn.prepareStatement(sql);ResultSet rs=pstmt.executeQuery()){
             while(rs.next()){
-                String id=rs.getString("id");
-                String title=rs.getString("title");
-                String author=rs.getString("author");
-                int quantity=rs.getInt("quantity");
-                list.add(new Book(id,title,author,quantity));
+                Book book=mapResult(rs);
+                book.setBorrowedQuantity(rs.getInt("borrowed_qty"));
+                list.add(book);
             }
         } catch (SQLException e) {
             System.out.println("Error!! Cannot select table book");
