@@ -3,7 +3,6 @@ package com.library.model;
 import lombok.*;
 
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
 public class Reader {
     @Setter(AccessLevel.NONE)
@@ -12,7 +11,14 @@ public class Reader {
     private String name;
     private String phone;
     private String email;
-    public Reader(String id,String name,String phone){
-        this(id,name,phone,null);
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
+    private int borrowedQuantity;
+    public Reader(String id,String name,String phone,String email){
+        this.id=id;
+        this.name=name;
+        this.email=email;
+        this.phone=phone;
     }
+    public Reader(String id,String name,String phone){this(id,name,phone,null);}
 }

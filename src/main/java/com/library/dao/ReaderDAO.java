@@ -61,11 +61,17 @@ public class ReaderDAO implements IReaderDAO{
     @Override
     public List<Reader> getAll(){
         List<Reader> list=new ArrayList<>();
-        String sql="Select id,name,phone,email from reader";
+        String sql = "SELECT r.*, " +
+                "COALESCE((SELECT COUNT(*) FROM borrow_record br " +
+                "          WHERE br.reader_id = r.id " +
+                "          AND br.status IN ('borrowed', 'overdue')), 0) AS borrowed_qty " +
+                "FROM reader r";
         try(PreparedStatement pstmt= conn.prepareStatement(sql);
             ResultSet rs=pstmt.executeQuery()){
             while(rs.next()){
-                list.add(mapResult(rs));
+                Reader reader=mapResult(rs);
+                reader.setBorrowedQuantity(rs.getInt("borrowed_qty"));
+                list.add(reader);
             }
         } catch (Exception e) {
             System.out.println("Cannot access reader database");

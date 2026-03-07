@@ -9,7 +9,6 @@
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
 
-
 <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="700.0" spacing="15.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.library.controller.BookController">
    <padding>
       <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
@@ -32,8 +31,8 @@
       <HBox alignment="CENTER_LEFT" prefHeight="70.0" prefWidth="200.0" spacing="10.0">
          <children>
             <Button mnemonicParsing="false" onAction="#onAddBook" prefHeight="20.0" prefWidth="70.0" text="Thêm" />
-            <Button mnemonicParsing="false" onAction="#onUpdateBook" prefHeight="20.0" prefWidth="70.0" text="Sửa" />
-            <Button mnemonicParsing="false" onAction="#onDeleteBook" prefHeight="20.0" prefWidth="70.0" text="Xóa" />
+            <Button fx:id="btnUpdate" mnemonicParsing="false" onAction="#onUpdateBook" prefHeight="20.0" prefWidth="70.0" text="Sửa" />
+            <Button fx:id="btnDelete" mnemonicParsing="false" onAction="#onDeleteBook" prefHeight="20.0" prefWidth="70.0" text="Xóa" />
             <Region prefHeight="200.0" prefWidth="200.0" HBox.hgrow="ALWAYS" />
             <Button mnemonicParsing="false" onAction="#onExportExcel" prefHeight="20.0" prefWidth="98.0" text="Xuất File Excel" />
          </children>

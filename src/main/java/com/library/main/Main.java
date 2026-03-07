@@ -1,5 +1,6 @@
 package com.library.main;
 
+import com.library.util.DatabaseConnection;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -36,6 +37,15 @@ public class Main extends Application {
         primaryStage.setScene(scene); // Lắp Scene vào Stage
         primaryStage.centerOnScreen(); // Hiển thị ở chính giữa màn hình
         primaryStage.show(); // Lệnh cuối cùng: Bật cửa sổ lên!
+    }
+    @Override
+    public void stop() throws Exception {
+        System.out.println("🛑 Ứng dụng đang tắt, tiến hành dọn dẹp tài nguyên...");
+
+        // Gọi hàm đóng kết nối Database
+        DatabaseConnection.closeConnection(); // Thay tên class cho đúng với dự án của bạn
+
+        super.stop();
     }
 
     public static void main(String[] args) {
