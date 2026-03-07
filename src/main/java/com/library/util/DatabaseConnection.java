@@ -54,4 +54,14 @@ public class DatabaseConnection {
     public Connection getConnection() {
         return connection;
     }
+    public static void closeConnection() {
+        try {
+            if (instance.connection!= null && !instance.connection.isClosed()) {
+                instance.connection.close();
+                System.out.println("🔒 Đã đóng kết nối Database an toàn!");
+            }
+        } catch (java.sql.SQLException e) {
+            System.err.println("Lỗi khi đóng Database: " + e.getMessage());
+        }
+    }
 }
