@@ -286,30 +286,48 @@ public class ReaderController {
         txtPhone.textProperty().addListener((obs, o, n) -> validateInput.run());
         validateInput.run();
 
-        // XỬ LÝ LƯU
-        Optional<ButtonType> result = dialog.showAndWait();
-        if (result.isPresent() && result.get() == btnSaveType) {
+        // XỬ LÝ LƯU VÀ BẮT LỖI TỪ ENUM (Sử dụng EventFilter để chặn đóng form)
+        saveButton.addEventFilter(javafx.event.ActionEvent.ACTION, event -> {
             String name = txtName.getText().trim();
             String phone = txtPhone.getText().trim();
             String email = txtEmail.getText().trim().isEmpty() ? null : txtEmail.getText().trim();
 
-            try {
-                if (isUpdate) {
-                    if(!readerService.updateReader(readerToEdit.getId(), name, phone, email)){
-                        UIUtils.showAlert("Lỗi","Hãy kiểm tra định dạng email hoặc sđt!");
-                    }
-                    else UIUtils.showAlert("Thành công", "Đã cập nhật thông tin Độc giả!");
-                } else {
-                    if(!readerService.addReader(name, phone, email)){
-                        UIUtils.showAlert("Lỗi","Hãy kiểm tra định dạng email hoặc sđt!");
-                    }
-                    else UIUtils.showAlert("Thành công", "Đã thêm Độc giả mới!");
-                }
-                refreshTable();
-            } catch (Exception ex) {
-                // Hiển thị trực tiếp message lỗi từ Service (ví dụ: "Số điện thoại đã tồn tại")
-                UIUtils.showAlert("Lỗi nghiệp vụ", ex.getMessage());
+            // Khai báo Enum từ ReaderService
+            com.library.service.ReaderService.ReaderStatus statusResult;
+
+            // Gọi xuống tầng Service
+            if (isUpdate) {
+                statusResult = readerService.updateReader(readerToEdit.getId(), name, phone, email);
+            } else {
+                statusResult = readerService.addReader(name, phone, email);
             }
-        }
+
+            // Dịch Enum thành các thông báo cụ thể
+            switch (statusResult) {
+                case SUCCESS:
+                    UIUtils.showAlert("Thành công", isUpdate ? "Đã cập nhật thông tin Độc giả!" : "Đã thêm Độc giả mới!");
+                    refreshTable();
+                    // Không consume() -> Form sẽ tự động đóng lại
+                    break;
+                case PHONE_EXIST:
+                    UIUtils.showAlert("Lỗi trùng lặp", "Số điện thoại này đã được đăng ký cho một độc giả khác!");
+                    event.consume(); // Chặn đóng Form để thủ thư sửa lại số
+                    break;
+                case EMAIL_EXIST:
+                    UIUtils.showAlert("Lỗi trùng lặp", "Email này đã tồn tại trong hệ thống!");
+                    event.consume();
+                    break;
+                case FORMAT_ERROR:
+                    UIUtils.showAlert("Sai định dạng", "Số điện thoại (hoặc Email) không đúng định dạng theo quy định!");
+                    event.consume();
+                    break;
+                case ERROR:
+                default:
+                    UIUtils.showAlert("Lỗi hệ thống", "Đã xảy ra lỗi khi lưu vào cơ sở dữ liệu. Vui lòng thử lại!");
+                    event.consume();
+                    break;
+            }
+        });
+        dialog.showAndWait();
     }
 }

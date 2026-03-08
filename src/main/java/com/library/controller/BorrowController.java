@@ -26,28 +26,43 @@ import java.time.LocalDate;
 public class BorrowController {
 
     // 1. KHAI BÁO CÁC THÀNH PHẦN GIAO DIỆN (@FXML)
-    @FXML private TableView<BorrowRecord> tableBorrow;
-    @FXML private TableColumn<BorrowRecord, Integer> colSTT;
-    @FXML private TableColumn<BorrowRecord, String> colName;   // Họ và tên
-    @FXML private TableColumn<BorrowRecord, String> colPhone;  // SĐT
-    @FXML private TableColumn<BorrowRecord, String> colTitle;    // Tựa sách
-    @FXML private TableColumn<BorrowRecord, String> colAuthor;   // Tác giả
-    @FXML private TableColumn<BorrowRecord, LocalDate> colBorrowDate;// Ngày mượn
-    @FXML private TableColumn<BorrowRecord, LocalDate> colReturnDate;// Hạn trả
-    @FXML private TableColumn<BorrowRecord, String> colStatus;       // Trạng thái
+    @FXML
+    private TableView<BorrowRecord> tableBorrow;
+    @FXML
+    private TableColumn<BorrowRecord, Integer> colSTT;
+    @FXML
+    private TableColumn<BorrowRecord, String> colName;   // Họ và tên
+    @FXML
+    private TableColumn<BorrowRecord, String> colPhone;  // SĐT
+    @FXML
+    private TableColumn<BorrowRecord, String> colTitle;    // Tựa sách
+    @FXML
+    private TableColumn<BorrowRecord, String> colAuthor;   // Tác giả
+    @FXML
+    private TableColumn<BorrowRecord, LocalDate> colBorrowDate;// Ngày mượn
+    @FXML
+    private TableColumn<BorrowRecord, LocalDate> colReturnDate;// Hạn trả
+    @FXML
+    private TableColumn<BorrowRecord, String> colStatus;       // Trạng thái
 
-    @FXML private TextField txtSearch;
-    @FXML private Button btnAdd;
-    @FXML private Button btnUpdate;
-    @FXML private Button btnDelete;
-    @FXML private Button btnReturn;
-    @FXML private Button btnExcel;
+    @FXML
+    private TextField txtSearch;
+    @FXML
+    private Button btnAdd;
+    @FXML
+    private Button btnUpdate;
+    @FXML
+    private Button btnDelete;
+    @FXML
+    private Button btnReturn;
+    @FXML
+    private Button btnExcel;
 
     // 2. BIẾN TOÀN CỤC
     private ObservableList<BorrowRecord> recordList = FXCollections.observableArrayList();
     private BorrowService borrowService = new BorrowService();
-    private BookService bookService=new BookService();
-    private ReaderService readerService=new ReaderService();
+    private BookService bookService = new BookService();
+    private ReaderService readerService = new ReaderService();
 
     // 3. HÀM KHỞI TẠO (CHẠY ĐẦU TIÊN)
     @FXML
@@ -122,7 +137,7 @@ public class BorrowController {
                 if (record.getBook().getTitle().toLowerCase().contains(lowerCaseFilter)) return true;
                 if (record.getBook().getAuthor().toLowerCase().contains(lowerCaseFilter)) return true;
                 if (record.getStatus().toLowerCase().contains(lowerCaseFilter)) return true;
-                if(record.getBorrowDate().toString().contains(lowerCaseFilter)) return true;
+                if (record.getBorrowDate().toString().contains(lowerCaseFilter)) return true;
 
                 return false;
             });
@@ -148,6 +163,7 @@ public class BorrowController {
                         }, tableBorrow.getSelectionModel().selectedItemProperty()))
         );
     }
+
     private void setupContextMenu() {
         ContextMenu contextMenu = new ContextMenu();
 
@@ -217,6 +233,7 @@ public class BorrowController {
             }
         }
     }
+
     @FXML
     public void onReturnBook(ActionEvent e) {
         BorrowRecord selectedRecord = tableBorrow.getSelectionModel().getSelectedItem();
@@ -251,6 +268,7 @@ public class BorrowController {
             }
         }
     }
+
     @FXML
     public void onExportExcel(ActionEvent e) {
         javafx.stage.FileChooser fileChooser = new javafx.stage.FileChooser();
@@ -307,6 +325,7 @@ public class BorrowController {
             }
         }
     }
+
     @FXML
     public void onAddRecord(ActionEvent e) {
         showBorrowFormDialog(null);
@@ -480,9 +499,9 @@ public class BorrowController {
         // Cuối cùng mới hiển thị Form lên màn hình
         dialog.showAndWait();
     }
+
     // Nhận tham số là TextField thay vì String
     private void showQuickAddReaderDialog(TextField parentPhoneField) {
-        // Lấy SĐT hiện tại từ Form mượn sách
         String currentPhone = parentPhoneField.getText().trim();
 
         Dialog<ButtonType> dialog = new Dialog<>();
@@ -498,11 +517,9 @@ public class BorrowController {
         grid.setVgap(10);
         grid.setPadding(new javafx.geometry.Insets(20, 10, 10, 10));
 
-        // 1. TẠO CÁC Ô NHẬP LIỆU
         TextField txtName = new TextField();
         txtName.setPrefWidth(200);
 
-        // Ô SĐT mới: Đổ dữ liệu cũ vào và cho phép sửa bình thường
         TextField txtNewPhone = new TextField(currentPhone);
         txtNewPhone.setPrefWidth(200);
 
@@ -516,10 +533,10 @@ public class BorrowController {
         grid.add(new Label("Email:"), 0, 2);
         grid.add(txtEmail, 1, 2);
 
-        javafx.scene.Node saveBtn = dialog.getDialogPane().lookupButton(btnSaveType);
+        // Ép kiểu Node sang Button để có thể gọi addEventFilter
+        Button saveBtn = (Button) dialog.getDialogPane().lookupButton(btnSaveType);
         saveBtn.setDisable(true);
 
-        // 2. RÀNG BUỘC: Phải nhập đủ Tên và SĐT mới cho lưu
         Runnable validateInput = () -> {
             boolean isValid = !txtName.getText().trim().isEmpty() && !txtNewPhone.getText().trim().isEmpty();
             saveBtn.setDisable(!isValid);
@@ -530,25 +547,41 @@ public class BorrowController {
 
         dialog.getDialogPane().setContent(grid);
 
-        // 3. XỬ LÝ LƯU & ĐỒNG BỘ NGƯỢC
-        if (dialog.showAndWait().orElse(ButtonType.CANCEL) == btnSaveType) {
-            try {
-                String name = txtName.getText().trim();
-                String finalPhone = txtNewPhone.getText().trim();
-                String email = txtEmail.getText().trim().isEmpty() ? null : txtEmail.getText().trim();
+// 3. SỬ DỤNG EVENT FILTER ĐỂ BẮT ENUM VÀ CHỐNG ĐÓNG FORM
+        saveBtn.addEventFilter(javafx.event.ActionEvent.ACTION, event -> {
+            String name = txtName.getText().trim();
+            String finalPhone = txtNewPhone.getText().trim();
+            String email = txtEmail.getText().trim().isEmpty() ? null : txtEmail.getText().trim();
 
-                // Lưu vào Database
-                readerService.addReader(name, finalPhone, email);
+            // Hứng kết quả Enum thay vì boolean
+            com.library.service.ReaderService.ReaderStatus statusResult = readerService.addReader(name, finalPhone, email);
 
-                // Đồng bộ ngược số điện thoại chuẩn xác vừa đăng ký
-                // ra lại ngoài màn hình mượn sách để thủ thư không phải gõ lại
-                parentPhoneField.setText(finalPhone);
-
-                UIUtils.showAlert("Thành công", "Đã đăng ký tài khoản Độc giả mới!\nSĐT trên phiếu mượn đã được tự động cập nhật. Bạn có thể bấm 'Lưu' phiếu mượn ngay bây giờ.");
-            } catch (Exception ex) {
-                // Hứng lỗi trùng SĐT từ ReaderService nếu có
-                UIUtils.showAlert("Lỗi nghiệp vụ", "Không thể đăng ký độc giả: " + ex.getMessage());
+            switch (statusResult) {
+                case SUCCESS:
+                    // Đồng bộ SĐT ra Form Phiếu mượn
+                    parentPhoneField.setText(finalPhone);
+                    UIUtils.showAlert("Thành công", "Đã đăng ký tài khoản Độc giả mới!\nSĐT trên phiếu mượn đã được tự động cập nhật.");
+                    break;
+                case PHONE_EXIST:
+                    UIUtils.showAlert("Lỗi trùng lặp", "Số điện thoại này đã tồn tại trong hệ thống!");
+                    event.consume();
+                    break;
+                case EMAIL_EXIST:
+                    UIUtils.showAlert("Lỗi trùng lặp", "Email này đã tồn tại!");
+                    event.consume();
+                    break;
+                case FORMAT_ERROR:
+                    UIUtils.showAlert("Sai định dạng", "Số điện thoại (10 chữ số) hoặc Email không hợp lệ!");
+                    event.consume();
+                    break;
+                case ERROR:
+                default:
+                    UIUtils.showAlert("Lỗi hệ thống", "Không thể tạo tài khoản lúc này!");
+                    event.consume();
+                    break;
             }
-        }
+        });
+
+        dialog.showAndWait();
     }
 }
