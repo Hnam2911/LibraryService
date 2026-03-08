@@ -44,6 +44,11 @@ public class ReaderController {
     @FXML
     public void initialize() {
         // 1. Cài đặt Cột
+        colSTT.setPrefWidth(40);
+        colName.setPrefWidth(220);
+        colPhone.setPrefWidth(155);
+        colEmail.setPrefWidth(220);
+        colBorrowed.setPrefWidth(100);
         colSTT.setSortable(false);
         colSTT.setCellFactory(column -> new TableCell<>() {
             @Override

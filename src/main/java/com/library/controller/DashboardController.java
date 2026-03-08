@@ -55,8 +55,8 @@ public class DashboardController {
 
     private void setupTables() {
         // Cột cho bảng Sách sắp hết
-        colLowStockQuantity.setPrefWidth(250);
-        colLowStockQuantity.setPrefWidth(70);
+        colLowStockTitle.setPrefWidth(250);
+        colLowStockQuantity.setPrefWidth(100);
         colLowStockTitle.setCellValueFactory(new PropertyValueFactory<>("title"));
         colLowStockQuantity.setCellValueFactory(new PropertyValueFactory<>("quantity"));
 

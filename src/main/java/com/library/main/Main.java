@@ -1,5 +1,6 @@
 package com.library.main;
 
+import atlantafx.base.theme.PrimerLight;
 import com.library.util.DatabaseConnection;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -31,6 +32,8 @@ public class Main extends Application {
         // 4. Đặt ngôi nhà lên một cái bãi đất (Scene)
         // Kích thước 1000x700 là kích thước mặc định lúc khởi động
         Scene scene = new Scene(root, 1000, 700);
+
+        Application.setUserAgentStylesheet(new PrimerLight().getUserAgentStylesheet());
 
         // 5. Cấu hình Cửa sổ ứng dụng (Stage)
         primaryStage.setTitle("Hệ thống Quản lý Thư viện v1.0"); // Tiêu đề cửa sổ
