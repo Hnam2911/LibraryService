@@ -41,6 +41,7 @@ public class MainController {
         btnReader.setTooltip(new Tooltip("Quản lý Độc giả"));
         btnBorrow.setTooltip(new Tooltip("Quản lý Phiếu mượn"));
         btnSetting.setTooltip(new Tooltip("Cài đặt"));
+        loadView("DashboardView.fxml");
 
     }
 
@@ -96,8 +97,7 @@ public class MainController {
     // Các hàm xử lý khi bấm nút (Tên hàm phải khớp chính xác với thẻ On Action)
     @FXML
     public void showDashboard(ActionEvent event) {
-        System.out.println("Đã bấm: Chuyển sang màn hình Tổng quan");
-        // Logic nhét DashboardView.fxml vào contentArea sẽ viết ở đây
+        loadView("DashboardView.fxml");
     }
 
     @FXML

@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="700.0" spacing="20.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.library.controller.DashboardController">
+   <children>
+      <HBox prefHeight="70.0" prefWidth="200.0" spacing="20.0">
+         <children>
+            <VBox prefHeight="200.0" prefWidth="100.0" HBox.hgrow="ALWAYS">
+               <children>
+                  <Label alignment="CENTER" prefHeight="18.0" prefWidth="154.0" text="Tổng số lượng sách" VBox.vgrow="ALWAYS">
+                     <font>
+                        <Font name="System Bold" size="14.0" />
+                     </font>
+                  </Label>
+                  <Label fx:id="lblTotalBooks" alignment="CENTER" prefHeight="101.0" prefWidth="150.0">
+                     <font>
+                        <Font name="System Bold" size="14.0" />
+                     </font>
+                  </Label>
+               </children>
+            </VBox>
+            <VBox prefHeight="200.0" prefWidth="100.0" HBox.hgrow="ALWAYS">
+               <children>
+                  <Label alignment="CENTER" prefHeight="18.0" prefWidth="158.0" text="Số lượng người dùng" VBox.vgrow="ALWAYS">
+                     <font>
+                        <Font name="System Bold" size="14.0" />
+                     </font>
+                  </Label>
+                  <Label fx:id="lblTotalReaders" alignment="CENTER" prefHeight="101.0" prefWidth="150.0">
+                     <font>
+                        <Font name="System Bold" size="14.0" />
+                     </font>
+                  </Label>
+               </children>
+            </VBox>
+            <VBox prefHeight="200.0" prefWidth="100.0" HBox.hgrow="ALWAYS">
+               <children>
+                  <Label alignment="CENTER" prefHeight="6.0" prefWidth="150.0" text="Số phiếu hiện tại">
+                     <font>
+                        <Font name="System Bold" size="14.0" />
+                     </font>
+                  </Label>
+                  <Label fx:id="lblBorrowed" alignment="CENTER" prefHeight="101.0" prefWidth="150.0">
+                     <font>
+                        <Font name="System Bold" size="14.0" />
+                     </font>
+                  </Label>
+               </children>
+            </VBox>
+            <VBox prefHeight="200.0" prefWidth="100.0" HBox.hgrow="ALWAYS">
+               <children>
+                  <Label alignment="CENTER" prefHeight="18.0" prefWidth="165.0" text="Số phiếu quá hạn">
+                     <font>
+                        <Font name="System Bold" size="14.0" />
+                     </font>
+                  </Label>
+                  <Label fx:id="lblOverdue" alignment="CENTER" prefHeight="91.0" prefWidth="150.0">
+                     <font>
+                        <Font name="System Bold" size="14.0" />
+                     </font>
+                  </Label>
+               </children>
+            </VBox>
+         </children>
+      </HBox>
+      <HBox prefHeight="100.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
+         <children>
+            <VBox alignment="CENTER" HBox.hgrow="ALWAYS">
+               <children>
+                  <Label prefHeight="25.0" prefWidth="182.0" text="Những quyển sách sắp hết">
+                     <font>
+                        <Font name="System Bold" size="14.0" />
+                     </font>
+                  </Label>
+                  <TableView fx:id="tableLowStock" prefHeight="444.0" prefWidth="263.0" VBox.vgrow="ALWAYS">
+                    <columns>
+                      <TableColumn fx:id="colLowStockTitle" prefWidth="208.7999324798584" text="Tựa sách" />
+                      <TableColumn fx:id="colLowStockQuantity" prefWidth="68.00006103515625" text="Số lượng" />
+                    </columns>
+                  </TableView>
+               </children>
+            </VBox>
+            <VBox alignment="CENTER" HBox.hgrow="ALWAYS">
+               <children>
+                  <Label prefHeight="25.0" prefWidth="194.0" text="Các độc giả quá hạn trả sách">
+                     <font>
+                        <Font name="System Bold" size="14.0" />
+                     </font>
+                  </Label>
+                  <TableView fx:id="tableOverdue" prefHeight="444.0" prefWidth="370.0" VBox.vgrow="ALWAYS">
+                    <columns>
+                      <TableColumn fx:id="colOverdueReader" prefWidth="131.20001524686813" text="Tên" />
+                      <TableColumn fx:id="colOverduePhone" minWidth="0.0" prefWidth="67.99993896484375" text="SĐT" />
+                        <TableColumn fx:id="colOverdueBook" prefWidth="110.40000915527344" text="Tên sách" />
+                        <TableColumn fx:id="colOverdueReturnDate" prefWidth="71.20006103515624" text="Hạn trả" />
+                    </columns>
+                  </TableView>
+               </children>
+            </VBox>
+         </children>
+      </HBox>
+   </children>
+   <padding>
+      <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+   </padding>
+</VBox>
