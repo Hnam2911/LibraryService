@@ -1,5 +1,7 @@
 package com.library.util;
 
+import io.github.cdimascio.dotenv.Dotenv;
+
 import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -12,31 +14,28 @@ public class DatabaseConnection {
     private Connection connection;
 
     private DatabaseConnection() {
-        // Tạo đối tượng Properties để chứa dữ liệu đọc từ file
-        Properties properties = new Properties();
+        try {
+            // 1. Tải các biến từ file .env lên RAM
+            Dotenv dotenv = Dotenv.configure().directory("./").load();
 
-        // Dùng InputStream để đọc file database.properties từ thư mục resources
-        try (InputStream inputStream = getClass().getClassLoader().getResourceAsStream("database/properties")) {
+            // 2. Lấy thông tin thông qua KEY
+            String url = dotenv.get("DB_URL");
+            String user = dotenv.get("DB_USER");
+            String password = dotenv.get("DB_PASSWORD");
 
-            if (inputStream == null) {
-                System.out.println("❌ Không tìm thấy file properties!");
-                return;
-            }
-
-            // Tải dữ liệu từ file vào đối tượng properties
-            properties.load(inputStream);
-
-            // Lấy thông tin ra từ các key đã định nghĩa
-            String url = properties.getProperty("db.url");
-            String user = properties.getProperty("db.username");
-            String password = properties.getProperty("db.password");
+            // 3. Thực hiện kết nối an toàn
+            this.connection = DriverManager.getConnection(url, user, password);
+            System.out.println("✅ Kết nối Database an toàn thành công!");
 
             // Tiến hành kết nối
             connection = DriverManager.getConnection(url, user, password);
-            //System.out.println("✅ Đã kết nối Database thành công qua file properties!");
+            //System.out.println("✅ Đã kết nối Database thành công qua file .env!");
 
-        } catch (Exception e) {
-            System.out.println("❌ Lỗi cấu hình hoặc kết nối Database: " + e.getMessage());
+        } catch (SQLException e) {
+            System.out.println("Lỗi kết nối database" + e.getMessage());
+        }
+        catch (Exception e) {
+            System.out.println("❌ Lỗi đọc file .env " + e.getMessage());
         }
     }
 
