@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+
+
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="700.0" spacing="15.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.library.controller.BorrowController">
+   <children>
+      <HBox prefHeight="100.0" prefWidth="200.0">
+         <children>
+            <TextField fx:id="txtSearch" prefWidth="400.0" promptText="tìm kiếm phiếu mượn qua tên,sđt,tựa sách,trạng thái,ngày mượn,..." />
+         </children>
+      </HBox>
+      <TableView fx:id="tableBorrow" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
+        <columns>
+          <TableColumn fx:id="colSTT" prefWidth="36.79998588562012" text="STT" />
+          <TableColumn fx:id="colName" prefWidth="97.59998321533203" text="Họ và tên" />
+            <TableColumn fx:id="colPhone" prefWidth="84.0" text="SĐT" />
+            <TableColumn fx:id="colTitle" prefWidth="131.20001220703125" text="Tựa sách" />
+            <TableColumn fx:id="colAuthor" prefWidth="88.0" text="Tác giả" />
+            <TableColumn fx:id="colBorrowDate" prefWidth="77.59994506835938" text="Ngày mượn" />
+            <TableColumn fx:id="colReturnDate" prefWidth="77.5999755859375" text="Hạn trả" />
+            <TableColumn fx:id="colStatus" prefWidth="66.4000244140625" text="Trạng thái" />
+        </columns>
+      </TableView>
+      <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" spacing="10.0">
+         <children>
+            <Button fx:id="btnAdd" mnemonicParsing="false" onAction="#onAddRecord" prefHeight="20.0" prefWidth="70.0" text="Thêm" />
+            <Button fx:id="btnUpdate" mnemonicParsing="false" onAction="#onUpdateRecord" prefHeight="20.0" prefWidth="70.0" text="Sửa" />
+            <Button fx:id="btnDelete" mnemonicParsing="false" onAction="#onDeleteRecord" prefHeight="20.0" prefWidth="70.0" text="Xóa" />
+            <Region prefHeight="200.0" prefWidth="20.0" />
+            <Button fx:id="btnReturn" mnemonicParsing="false" onAction="#onReturnBook" prefHeight="20.0" prefWidth="70.0" text="Trả sách" />
+            <Region prefHeight="200.0" prefWidth="200.0" HBox.hgrow="ALWAYS" />
+            <Button fx:id="btnExcel" mnemonicParsing="false" onAction="#onExportExcel" prefHeight="20.0" prefWidth="98.0" text="Xuất File Excel" />
+         </children>
+      </HBox>
+   </children>
+   <padding>
+      <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+   </padding>
+</VBox>

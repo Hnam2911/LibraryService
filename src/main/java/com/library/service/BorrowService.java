@@ -25,6 +25,7 @@ public class BorrowService {
         RETURN_DATE_ERROR,
         STATUS_ERROR,
         ADD_ERROR,
+        ERROR
     }
     public BorrowStatus borrowBook(String title,String author,String phone,int days){
         Book book=bookDAO.find(title,author);
@@ -68,6 +69,12 @@ public class BorrowService {
         }
 
         Book oldBook=record.getBook();
+        record.setBook(book);
+        record.setStatus(status);
+        record.setReader(reader);
+        record.setBorrowDate(borrowDate);
+        record.setReturnDate(returnDate);
+        if (!borrowDAO.update(record)) return BorrowStatus.ERROR;
         if(!oldBook.getId().equals(book.getId())) {
             if(book.getQuantity()<=0) return  BorrowStatus.BOOK_OUT_OF_STOCK;
             bookDAO.update(new Book(oldBook.getId(), oldBook.getTitle(),
@@ -75,12 +82,6 @@ public class BorrowService {
             bookDAO.update(new Book(book.getId(), book.getTitle(),
                     book.getAuthor(), book.getQuantity() - 1));
         }
-        record.setBook(book);
-        record.setStatus(status);
-        record.setReader(reader);
-        record.setBorrowDate(borrowDate);
-        record.setReturnDate(returnDate);
-        borrowDAO.update(record);
         return BorrowStatus.SUCCESS;
     }
     public boolean returnBook(String id){

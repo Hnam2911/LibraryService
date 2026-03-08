@@ -112,7 +112,7 @@ public class MainController {
 
     @FXML
     public void showBorrowView(ActionEvent event) {
-        System.out.println("Đã bấm: Chuyển sang màn hình Mượn/Trả");
+        loadView("BorrowView.fxml");
     }
 
     @FXML

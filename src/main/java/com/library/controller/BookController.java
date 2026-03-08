@@ -193,13 +193,13 @@ public class BookController {
         }
 
         // 2. HIỂN THỊ HỘP THOẠI XÁC NHẬN (Confirmation Alert)
-        javafx.scene.control.Alert confirmAlert = new javafx.scene.control.Alert(javafx.scene.control.Alert.AlertType.CONFIRMATION);
+        Alert confirmAlert = new Alert(Alert.AlertType.CONFIRMATION);
         confirmAlert.setTitle("Xác nhận xóa");
         confirmAlert.setHeaderText("Bạn có chắc chắn muốn xóa cuốn sách này?");
         confirmAlert.setContentText("Tựa sách: " + selectedBook.getTitle());
 
         // 3. XỬ LÝ KẾT QUẢ TỪ NGƯỜI DÙNG
-        if (confirmAlert.showAndWait().orElse(javafx.scene.control.ButtonType.CANCEL) == javafx.scene.control.ButtonType.OK) {
+        if (confirmAlert.showAndWait().orElse(ButtonType.CANCEL) == ButtonType.OK) {
             // Gọi Service xóa (Giả định bookService của bạn trả về boolean)
             boolean isDeleted = bookService.deleteBook(selectedBook.getId());
 
