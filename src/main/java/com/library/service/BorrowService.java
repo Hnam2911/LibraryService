@@ -25,13 +25,26 @@ public class BorrowService {
         RETURN_DATE_ERROR,
         STATUS_ERROR,
         ADD_ERROR,
-        ERROR
+        ERROR,
+        LIMIT_EXCEEDED
     }
     public BorrowStatus borrowBook(String title,String author,String phone,int days){
         Book book=bookDAO.find(title,author);
         if(book==null) return BorrowStatus.BOOK_NOT_FOUND;
         if(book.getQuantity()<=0) return BorrowStatus.BOOK_OUT_OF_STOCK;
         Reader reader=readerDAO.findByPhone(phone);
+        int maxAllowed = getMaxBorrowBooks();
+
+        // Đếm số phiếu mượn của độc giả này đang ở trạng thái borrowed hoặc overdue
+        long unreturnedCount = borrowDAO.getAll().stream()
+                .filter(record -> record.getReader().getPhone().equals(phone))
+                .filter(record ->"overdue".equalsIgnoreCase(record.getStatus()))
+                .count();
+
+        if (unreturnedCount >= maxAllowed) {
+            System.out.println("Độc giả đã đạt giới hạn mượn sách chưa trả: " + unreturnedCount + "/" + maxAllowed);
+            return BorrowStatus.LIMIT_EXCEEDED;
+        }
         if(reader==null) return BorrowStatus.READER_NOT_FOUND;
         BorrowRecord newRecord = new BorrowRecord(
                 UUID.randomUUID().toString(), // Tự sinh ID
@@ -109,6 +122,19 @@ public class BorrowService {
 
         // 3. Thực hiện xóa phiếu mượn
         return borrowDAO.delete(id);
+    }
+    private int getMaxBorrowBooks() {
+        try {
+            java.util.Properties props = new java.util.Properties();
+            java.io.File configFile = new java.io.File("config.properties");
+            if (configFile.exists()) {
+                props.load(new java.io.FileInputStream(configFile));
+                return Integer.parseInt(props.getProperty("MAX_BORROW_BOOKS", "3"));
+            }
+        } catch (Exception e) {
+            System.err.println("Lỗi đọc file cấu hình trong Service: " + e.getMessage());
+        }
+        return 3; // Mặc định nếu không tìm thấy file
     }
     public List<BorrowRecord> getAllRecord(){return borrowDAO.getAll();}
     public List<BorrowRecord> searchRecord(String keyword){return borrowDAO.searchRecord(keyword);}

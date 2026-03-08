@@ -117,6 +117,6 @@ public class MainController {
 
     @FXML
     public void showSettings(ActionEvent event) {
-        System.out.println("Đã bấm: Mở Cài đặt");
+        loadView("SettingView.fxml");
     }
 }

@@ -388,8 +388,20 @@ public class BorrowController {
             cbStatus = null;
             dpReturn = null;
             dpBorrow = null;
-            // NẾU LÀ THÊM MỚI: Chỉ cần nhập số ngày mượn
-            spinDays = new Spinner<>(1, 60, 14); // Cho mượn từ 1 đến 60 ngày, mặc định 14 ngày
+            int defaultDays = 14; // Giá trị dự phòng nếu file lỗi
+            try {
+                java.util.Properties props = new java.util.Properties();
+                java.io.File configFile = new java.io.File("config.properties");
+                if (configFile.exists()) {
+                    props.load(new java.io.FileInputStream(configFile));
+                    defaultDays = Integer.parseInt(props.getProperty("DEFAULT_BORROW_DAYS", "14"));
+                }
+            } catch (Exception ex) {
+                System.err.println("Lỗi đọc cấu hình: " + ex.getMessage());
+            }
+
+            // Dùng biến defaultDays vừa đọc được để khởi tạo Spinner
+            spinDays = new Spinner<>(1, 60, defaultDays);
             spinDays.setEditable(true);
             grid.add(new Label("Số ngày mượn:"), 0, 3);
             grid.add(spinDays, 1, 3);
@@ -485,6 +497,10 @@ public class BorrowController {
                 case STATUS_ERROR:
                     UIUtils.showAlert("Lỗi Trạng thái", "Trạng thái không hợp lệ, hoặc bạn đang cố chuyển thành 'returned' sai quy trình.");
                     event.consume();
+                    break;
+                case LIMIT_EXCEEDED:
+                    UIUtils.showAlert("Vượt quá giới hạn", "Độc giả này đang giữ số sách chưa trả đạt mức tối đa cho phép trong Cài đặt.\nVui lòng trả bớt sách trước khi mượn thêm!");
+                    event.consume(); // Chặn đóng Form
                     break;
                 case RECORD_NOT_FOUND:
                 case ADD_ERROR:
